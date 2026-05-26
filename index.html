@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐾 PawVibesZ — Cats on Zoom</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #FF6B6B;
+    --yellow: #FFD93D;
+    --mint: #6BCB77;
+    --sky: #4D96FF;
+    --lavender: #C77DFF;
+    --peach: #FF9A3C;
+    --teal: #00C9A7;
+    --pink: #FF6EB4;
+    --cream: #FFF9F0;
+    --dark: #1A1A2E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+
+  /* ===== NOISE TEXTURE OVERLAY ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ===== TICKER ===== */
+  .ticker-wrap {
+    background: var(--dark);
+    color: var(--yellow);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    padding: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--yellow);
+  }
+  .ticker-track {
+    display: inline-flex;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker-track span { padding: 0 2rem; }
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #FFE8E8 0%, #FFF3CD 25%, #D4EDDA 50%, #D1ECF1 75%, #EDE7F6 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,107,0.15), transparent 70%);
+    top: -200px; left: -200px;
+    animation: pulse 6s ease-in-out infinite;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(77,150,255,0.15), transparent 70%);
+    bottom: -150px; right: -150px;
+    animation: pulse 8s ease-in-out infinite reverse;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--dark);
+    color: var(--yellow);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--coral), var(--peach), var(--yellow), var(--mint), var(--sky), var(--lavender));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 300%;
+    animation: gradShift 4s ease infinite, fadeDown 0.8s ease 0.1s both;
+    filter: drop-shadow(0 4px 12px rgba(255,107,107,0.3));
+  }
+  @keyframes gradShift { 0%,100%{background-position:0%} 50%{background-position:100%} }
+
+  .hero-sub {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    color: #444;
+    margin: 1.2rem 0 2rem;
+    max-width: 600px;
+    animation: fadeDown 0.8s ease 0.2s both;
+  }
+
+  .hero-cats {
+    font-size: clamp(3rem, 6vw, 5rem);
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.8s ease 0.3s both;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .hero-cats span {
+    display: inline-block;
+    animation: float var(--d,3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(5deg)} }
+
+  .cta-group {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeDown 0.8s ease 0.4s both;
+  }
+
+  .btn {
+    display: inline-block;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn:hover::before { transform: translateX(0); }
+  .btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--coral), var(--peach));
+    color: white;
+    box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+  }
+  .btn-secondary {
+    background: var(--dark);
+    color: var(--yellow);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ===== STATS STRIP ===== */
+  .stats-strip {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    background: var(--dark);
+  }
+  .stat {
+    padding: 2rem 3rem;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    flex: 1;
+    min-width: 150px;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.7);
+  }
+  .stat:nth-child(1) .stat-num { color: var(--coral); }
+  .stat:nth-child(2) .stat-num { color: var(--yellow); }
+  .stat:nth-child(3) .stat-num { color: var(--mint); }
+  .stat:nth-child(4) .stat-num { color: var(--sky); }
+
+  /* ===== SECTIONS ===== */
+  section { padding: 6rem 2rem; }
+
+  .section-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  h2.section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    max-width: 560px;
+  }
+
+  /* ===== WHY SECTION ===== */
+  .why-section {
+    background: linear-gradient(135deg, #FFF9F0 60%, #FFF0F3 100%);
+    position: relative;
+  }
+
+  .why-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .why-left .section-label { color: var(--coral); }
+  .why-left h2 { color: var(--dark); }
+
+  .why-cards {
+    display: grid;
+    gap: 1.2rem;
+    margin-top: 2.5rem;
+  }
+
+  .why-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border-left: 4px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: slideIn 0.6s ease both;
+    animation-delay: var(--delay, 0s);
+  }
+  .why-card:hover { transform: translateX(6px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+
+  .why-card:nth-child(1) { border-color: var(--coral); }
+  .why-card:nth-child(2) { border-color: var(--sky); }
+  .why-card:nth-child(3) { border-color: var(--mint); }
+  .why-card:nth-child(4) { border-color: var(--lavender); }
+  .why-card:nth-child(5) { border-color: var(--peach); }
+
+  .why-icon { font-size: 2rem; flex-shrink: 0; }
+  .why-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.2rem; color: var(--dark); }
+  .why-card p { font-size: 0.9rem; line-height: 1.6; color: #666; }
+
+  .why-right {
+    position: relative;
+  }
+
+  .bubble-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .bubble {
+    border-radius: 28px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: white;
+    font-weight: 800;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    animation: float var(--d,4s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  .bubble-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+
+  .bubble-1 { background: linear-gradient(135deg, var(--coral), #FF8E53); }
+  .bubble-2 { background: linear-gradient(135deg, var(--sky), var(--teal)); grid-row: span 1; }
+  .bubble-3 { background: linear-gradient(135deg, var(--lavender), var(--pink)); }
+  .bubble-4 { background: linear-gradient(135deg, var(--mint), var(--teal)); }
+  .bubble-big {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--dark), #2d2d52);
+    border: 3px solid var(--yellow);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    padding: 1.5rem;
+  }
+
+  /* ===== NOISY ERA SECTION ===== */
+  .noisy-section {
+    background: var(--dark);
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .noisy-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255,107,107,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(77,150,255,0.1) 0%, transparent 50%);
+  }
+
+  .noisy-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .noisy-section .section-label { color: var(--yellow); }
+  .noisy-section h2 { color: white; margin-bottom: 1.5rem; }
+  .noisy-section .section-desc { color: rgba(255,255,255,0.7); margin: 0 auto 3rem; }
+
+  .disconnected-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .dis-card {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+    transition: background 0.3s, transform 0.2s;
+  }
+  .dis-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-4px); }
+  .dis-card .dis-icon { font-size: 2.5rem; margin-bottom: 0.8rem; display: block; }
+  .dis-card h3 { font-weight: 800; font-size: 1rem; margin-bottom: 0.4rem; }
+  .dis-card p { font-size: 0.85rem; opacity: 0.6; line-height: 1.6; }
+
+  .vs-arrow {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--yellow);
+    margin: 0 auto 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .vs-line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,211,61,0.4), transparent); }
+
+  .solution-card {
+    background: linear-gradient(135deg, rgba(107,203,119,0.15), rgba(0,201,167,0.15));
+    border: 2px solid var(--mint);
+    border-radius: 24px;
+    padding: 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.9);
+  }
+  .solution-card strong { color: var(--mint); }
+
+  /* ===== HOW IT WORKS ===== */
+  .how-section {
+    background: linear-gradient(180deg, #F0FFF4 0%, #E8F4FD 100%);
+  }
+  .how-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .how-header { text-align: center; margin-bottom: 4rem; }
+  .how-header .section-label { color: var(--teal); }
+  .how-header h2 { color: var(--dark); }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    position: relative;
+  }
+
+  .step {
+    background: white;
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.07);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+  }
+  .step:nth-child(1)::before { background: linear-gradient(90deg, var(--coral), var(--peach)); }
+  .step:nth-child(2)::before { background: linear-gradient(90deg, var(--sky), var(--teal)); }
+  .step:nth-child(3)::before { background: linear-gradient(90deg, var(--lavender), var(--pink)); }
+  .step:nth-child(4)::before { background: linear-gradient(90deg, var(--mint), var(--teal)); }
+
+  .step:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
+
+  .step-num {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: white;
+    margin: 0 auto 1.2rem;
+  }
+  .step:nth-child(1) .step-num { background: linear-gradient(135deg, var(--coral), var(--peach)); }
+  .step:nth-child(2) .step-num { background: linear-gradient(135deg, var(--sky), var(--teal)); }
+  .step:nth-child(3) .step-num { background: linear-gradient(135deg, var(--lavender), var(--pink)); }
+  .step:nth-child(4) .step-num { background: linear-gradient(135deg, var(--mint), var(--teal)); }
+
+  .step-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+  .step h3 { font-weight: 900; font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--dark); }
+  .step p { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+  /* ===== SCIENCE ===== */
+  .science-section {
+    background: linear-gradient(135deg, #F3E8FF 0%, #FFF0F8 50%, #FFE8E8 100%);
+  }
+  .science-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .science-left .section-label { color: var(--lavender); }
+
+  .science-facts {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .fact {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: white;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+  }
+  .fact:hover { transform: scale(1.02); }
+  .fact-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .fact p { font-size: 0.9rem; line-height: 1.5; color: #555; }
+  .fact strong { color: var(--dark); }
+
+  .science-right {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .science-stat {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    text-align: center;
+    border-bottom: 4px solid;
+    transition: transform 0.2s;
+  }
+  .science-stat:hover { transform: translateY(-5px); }
+  .science-stat:nth-child(1) { border-color: var(--lavender); }
+  .science-stat:nth-child(2) { border-color: var(--coral); }
+  .science-stat:nth-child(3) { border-color: var(--mint); }
+
+  .science-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    display: block;
+    background: linear-gradient(135deg, var(--lavender), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .science-stat:nth-child(2) .science-num { background: linear-gradient(135deg, var(--coral), var(--peach)); -webkit-background-clip: text; background-clip: text; }
+  .science-stat:nth-child(3) .science-num { background: linear-gradient(135deg, var(--mint), var(--teal)); -webkit-background-clip: text; background-clip: text; }
+
+  .science-stat p { font-size: 0.9rem; color: #666; font-weight: 700; margin-top: 0.3rem; }
+
+  /* ===== CATS MOSAIC ===== */
+  .cats-section {
+    background: var(--dark);
+    text-align: center;
+    padding-bottom: 4rem;
+  }
+  .cats-header .section-label { color: var(--peach); }
+  .cats-header h2 { color: white; margin-bottom: 0.5rem; }
+  .cats-header p { color: rgba(255,255,255,0.6); margin-bottom: 3rem; font-size: 1rem; }
+
+  .countries-grid {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    justify-content: center;
+  }
+
+  .country-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50px;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .country-pill:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.3);
+    color: white;
+    transform: scale(1.05);
+  }
+  .country-pill.highlight {
+    background: linear-gradient(135deg, var(--coral), var(--peach));
+    border-color: transparent;
+    color: white;
+  }
+
+  .cat-emoji-wall {
+    max-width: 700px;
+    margin: 3rem auto 0;
+    font-size: 2.5rem;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+  }
+  .cat-emoji-wall span {
+    display: inline-block;
+    animation: float var(--d,3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    cursor: default;
+    transition: transform 0.2s;
+  }
+  .cat-emoji-wall span:hover { transform: scale(1.5) rotate(15deg); }
+
+  /* ===== TESTIMONIAL VIBE ===== */
+  .vibe-section {
+    background: linear-gradient(135deg, #FFFBF0, #F0F9FF);
+    text-align: center;
+  }
+  .vibe-inner { max-width: 1000px; margin: 0 auto; }
+  .vibe-header .section-label { color: var(--peach); }
+  .vibe-header h2 { color: var(--dark); margin-bottom: 0.5rem; }
+  .vibe-header p { color: #666; margin-bottom: 3rem; }
+
+  .vibes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .vibe-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: left;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .vibe-card::before {
+    content: '"';
+    position: absolute;
+    top: -20px; right: 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 8rem;
+    opacity: 0.07;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .vibe-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
+
+  .vibe-top {
+    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem;
+  }
+  .vibe-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .vibe-name { font-weight: 800; font-size: 0.95rem; color: var(--dark); }
+  .vibe-loc { font-size: 0.8rem; color: #aaa; }
+  .vibe-stars { color: var(--yellow); font-size: 0.9rem; }
+  .vibe-text { font-size: 0.9rem; color: #555; line-height: 1.7; }
+
+  .vibe-card:nth-child(1) .vibe-avatar { background: linear-gradient(135deg, #FFE5E5, var(--coral)); }
+  .vibe-card:nth-child(2) .vibe-avatar { background: linear-gradient(135deg, #E5F3FF, var(--sky)); }
+  .vibe-card:nth-child(3) .vibe-avatar { background: linear-gradient(135deg, #E5FFE9, var(--mint)); }
+  .vibe-card:nth-child(4) .vibe-avatar { background: linear-gradient(135deg, #F3E5FF, var(--lavender)); }
+
+  /* ===== PRICING ===== */
+  .pricing-section {
+    background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+    text-align: center;
+    color: white;
+  }
+  .pricing-inner { max-width: 900px; margin: 0 auto; }
+  .pricing-section .section-label { color: var(--yellow); }
+  .pricing-section h2 { color: white; margin-bottom: 0.5rem; }
+  .pricing-section > .section-desc { color: rgba(255,255,255,0.6); margin: 0 auto 3rem; }
+
+  .pricing-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .price-card {
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: transform 0.3s;
+  }
+  .price-card:hover { transform: scale(1.04); }
+  .price-card.featured {
+    background: linear-gradient(135deg, var(--coral), var(--peach));
+    box-shadow: 0 15px 40px rgba(255,107,107,0.4);
+  }
+  .price-card.group-card {
+    background: linear-gradient(135deg, var(--sky), var(--teal));
+    box-shadow: 0 15px 40px rgba(77,150,255,0.4);
+  }
+  .price-card.paypal-card {
+    background: linear-gradient(135deg, var(--lavender), var(--pink));
+    box-shadow: 0 15px 40px rgba(199,125,255,0.4);
+  }
+
+  .price-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+  }
+
+  .price-emoji { font-size: 3rem; margin-bottom: 0.5rem; display: block; }
+  .price-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.5rem;
+    color: white;
+    display: block;
+    line-height: 1;
+  }
+  .price-per { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 1rem; }
+  .price-desc { color: rgba(255,255,255,0.85); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.5rem; }
+  .price-btn {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 50px;
+    padding: 10px 24px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .price-btn:hover { background: rgba(255,255,255,0.35); border-color: white; }
+
+  /* ===== FINAL CTA ===== */
+  .final-section {
+    background: linear-gradient(135deg, #FFE8E8 0%, #FFF3CD 50%, #E8F4FF 100%);
+    text-align: center;
+    padding: 8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .final-section::before {
+    content: '🐾';
+    position: absolute;
+    font-size: 20rem;
+    opacity: 0.04;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+
+  .final-inner { max-width: 700px; margin: 0 auto; position: relative; }
+  .final-emoji { font-size: 5rem; margin-bottom: 1rem; display: block; animation: float 3s ease-in-out infinite; }
+  .final-inner h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    background: linear-gradient(135deg, var(--coral), var(--peach), var(--sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+  .final-inner p { font-size: 1.1rem; color: #666; margin-bottom: 2rem; line-height: 1.7; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--yellow); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .footer-logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: white;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .why-grid, .science-inner { grid-template-columns: 1fr; }
+    .bubble-grid { grid-template-columns: 1fr 1fr; }
+    .stat { padding: 1.5rem; }
+    .stat-num { font-size: 2rem; }
+  }
+
+  /* ===== SCROLL ANIMATION ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span>😻 Cats on Zoom</span>
+    <span>🌍 20+ Countries</span>
+    <span>🐾 70+ Real Cats</span>
+    <span>✨ Only €8/Session</span>
+    <span>🧘 Mindful Presence</span>
+    <span>😸 Real. Unscripted. Purring.</span>
+    <span>💛 The World's First Cats on Zoom Platform</span>
+    <span>😻 Cats on Zoom</span>
+    <span>🌍 20+ Countries</span>
+    <span>🐾 70+ Real Cats</span>
+    <span>✨ Only €8/Session</span>
+    <span>🧘 Mindful Presence</span>
+    <span>😸 Real. Unscripted. Purring.</span>
+    <span>💛 The World's First Cats on Zoom Platform</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">🌍 The World's First Cats on Zoom Platform</div>
+    <h1>PawVibesZ</h1>
+    <p class="hero-sub">Meet a real cat for a few minutes of mindful presence.<br>Purring, kindness, calm breathing, genuine connection.</p>
+    <div class="hero-cats">
+      <span style="--d:2.5s;--delay:0s">😻</span>
+      <span style="--d:3.2s;--delay:0.3s">🐱</span>
+      <span style="--d:2.8s;--delay:0.6s">😸</span>
+      <span style="--d:3.5s;--delay:0.1s">🐾</span>
+      <span style="--d:2.6s;--delay:0.4s">😺</span>
+      <span style="--d:3.1s;--delay:0.7s">🐈</span>
+      <span style="--d:2.9s;--delay:0.2s">😽</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat"><span class="stat-num">70+</span><span class="stat-label">Real Cats</span></div>
+  <div class="stat"><span class="stat-num">20+</span><span class="stat-label">Countries</span></div>
+  <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Host Specialists</span></div>
+  <div class="stat"><span class="stat-num">€8</span><span class="stat-label">Per Session</span></div>
+</div>
+
+<!-- WHY BENEFICIAL -->
+<section class="why-section">
+  <div class="why-grid">
+    <div class="why-left reveal">
+      <span class="section-label">🐱 Why It Matters</span>
+      <h2 class="section-title">The Antidote to a Noisy, Disconnected World</h2>
+      <p class="section-desc">We live in an era of constant noise — pinging phones, doomscrolling, shallow scrolling, burnout. PawVibesZ offers something radically different: a few minutes of genuine presence with a real, living, purring creature.</p>
+
+      <div class="why-cards">
+        <div class="why-card" style="--delay:0.1s">
+          <span class="why-icon">🧠</span>
+          <div>
+            <h3>Cortisol Drops Instantly</h3>
+            <p>Research shows that watching cats reduces stress hormones within minutes. Purring frequencies (25–50 Hz) are clinically calming to the nervous system.</p>
+          </div>
+        </div>
+        <div class="why-card" style="--delay:0.2s">
+          <span class="why-icon">💙</span>
+          <div>
+            <h3>Real Connection in a Fake World</h3>
+            <p>In a world of AI avatars and doom feeds, a real cat on screen — breathing, blinking, knocking things off tables — is authentically alive.</p>
+          </div>
+        </div>
+        <div class="why-card" style="--delay:0.3s">
+          <span class="why-icon">🌿</span>
+          <div>
+            <h3>Mindfulness Without the App</h3>
+            <p>No guided meditation needed. Watching a cat be a cat — unhurried, curious, unapologetically itself — is a masterclass in presence.</p>
+          </div>
+        </div>
+        <div class="why-card" style="--delay:0.4s">
+          <span class="why-icon">🌍</span>
+          <div>
+            <h3>Cross-Cultural Warmth</h3>
+            <p>Your cat might live in Tokyo, Johannesburg, or Valencia. Each session is a tiny portal to another corner of the world, filled with kindness.</p>
+          </div>
+        </div>
+        <div class="why-card" style="--delay:0.5s">
+          <span class="why-icon">💸</span>
+          <div>
+            <h3>Radically Accessible Wellness</h3>
+            <p>At €8, it costs less than a coffee and has better ROI than most wellness subscriptions. Calm shouldn't be a luxury.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="why-right reveal">
+      <div class="bubble-grid">
+        <div class="bubble bubble-1" style="--d:4s;--delay:0s">
+          <span class="bubble-emoji">😴</span>
+          Better Sleep
+        </div>
+        <div class="bubble bubble-2" style="--d:3.5s;--delay:0.5s">
+          <span class="bubble-emoji">💓</span>
+          Lower Blood Pressure
+        </div>
+        <div class="bubble bubble-3" style="--d:4.5s;--delay:0.2s">
+          <span class="bubble-emoji">😂</span>
+          More Laughter
+        </div>
+        <div class="bubble bubble-4" style="--d:3.8s;--delay:0.7s">
+          <span class="bubble-emoji">🧘</span>
+          Less Anxiety
+        </div>
+        <div class="bubble bubble-big" style="--d:5s;--delay:0.3s">
+          <span class="bubble-emoji">🐾</span>
+          One session. One cat. One moment that actually matters.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOISY ERA -->
+<section class="noisy-section">
+  <div class="noisy-inner reveal">
+    <span class="section-label">🌐 The Problem</span>
+    <h2 class="section-title">We're More Connected Than Ever. And More Alone.</h2>
+    <p class="section-desc">The modern world promises connection but delivers noise. Here's what we're all living through — and what PawVibesZ gently, purring-ly counters.</p>
+
+    <div class="disconnected-grid">
+      <div class="dis-card">
+        <span class="dis-icon">📱</span>
+        <h3>Screen Overload</h3>
+        <p>Average person checks their phone 96 times a day. Most of it is anxiety-inducing noise.</p>
+      </div>
+      <div class="dis-card">
+        <span class="dis-icon">😶</span>
+        <h3>Loneliness Epidemic</h3>
+        <p>The WHO declared loneliness a global health threat. Social media connects billions, yet we feel unseen.</p>
+      </div>
+      <div class="dis-card">
+        <span class="dis-icon">🔥</span>
+        <h3>Burnout Culture</h3>
+        <p>"Hustle" has replaced rest. We've forgotten how to just be — without productivity justifying it.</p>
+      </div>
+      <div class="dis-card">
+        <span class="dis-icon">🤖</span>
+        <h3>AI Everywhere</h3>
+        <p>Artificial faces, generated voices, synthetic warmth. Authentic aliveness is getting harder to find.</p>
+      </div>
+    </div>
+
+    <div class="vs-arrow">
+      <div class="vs-line"></div>
+      <span>🐾 Enter PawVibesZ</span>
+      <div class="vs-line"></div>
+    </div>
+
+    <div class="solution-card">
+      A real cat, a real human host, a real Zoom call.<br>
+      <strong>No scripts. No algorithms. No agenda.</strong><br>
+      Just a creature who doesn't know what LinkedIn is, doesn't care about your deadlines,<br>
+      and will stare at you with those slow-blink eyes that say: <strong>you're fine. breathe.</strong>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="how-header reveal">
+      <span class="section-label">🗓️ The Process</span>
+      <h2 class="section-title">Four Steps to Your Calm</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal" style="transition-delay:0.1s">
+        <div class="step-num">1</div>
+        <span class="step-emoji">🐱</span>
+        <h3>Pick a Cat</h3>
+        <p>Browse 70+ real cats across 20+ countries. Find the one whose vibe matches yours.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:0.2s">
+        <div class="step-num">2</div>
+        <span class="step-emoji">💳</span>
+        <h3>Book & Pay</h3>
+        <p>One-click checkout via Stripe or PayPal. €8 solo, €80 group. Secure and instant.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:0.3s">
+        <div class="step-num">3</div>
+        <span class="step-emoji">📅</span>
+        <h3>Schedule</h3>
+        <p>Fill in the booking form with your chosen cat and preferred date & time. We confirm fast.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:0.4s">
+        <div class="step-num">4</div>
+        <span class="step-emoji">😌</span>
+        <h3>Breathe & Reset</h3>
+        <p>Join on Zoom and let the purring do its magic. Calm, grounded, genuinely reconnected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCIENCE -->
+<section class="science-section">
+  <div class="science-inner">
+    <div class="science-left reveal">
+      <span class="section-label">🔬 The Science</span>
+      <h2 class="section-title">Cats Are Literally Good For You</h2>
+      <p class="section-desc">This isn't whimsy — it's evidence. Animal-assisted therapy has decades of peer-reviewed research behind it. Cats, specifically, are uniquely calming.</p>
+
+      <div class="science-facts">
+        <div class="fact">
+          <span class="fact-icon">🔊</span>
+          <p><strong>Purring heals.</strong> Cat purr frequencies (25–50 Hz) have been shown to promote bone density, reduce swelling, and lower blood pressure in listeners.</p>
+        </div>
+        <div class="fact">
+          <span class="fact-icon">😌</span>
+          <p><strong>Oxytocin release.</strong> Even watching animals (not just touching them) triggers bonding hormones that counteract stress and social isolation.</p>
+        </div>
+        <div class="fact">
+          <span class="fact-icon">💤</span>
+          <p><strong>Sleep improves.</strong> Exposure to calming stimuli before bed — like a quiet cat session — reduces racing thoughts and improves sleep onset.</p>
+        </div>
+        <div class="fact">
+          <span class="fact-icon">🎯</span>
+          <p><strong>Focus returns.</strong> Micro-breaks with positive emotional stimuli restore cognitive attention better than scrolling social media.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="science-right reveal">
+      <div class="science-stat">
+        <span class="science-num">68%</span>
+        <p>reduction in self-reported stress after animal-assisted interactions</p>
+      </div>
+      <div class="science-stat">
+        <span class="science-num">25Hz</span>
+        <p>cat purr frequency — the same range used in therapeutic vibration devices</p>
+      </div>
+      <div class="science-stat">
+        <span class="science-num">8 min</span>
+        <p>average time to feel measurably calmer during a PawVibesZ session</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATS WORLDWIDE -->
+<section class="cats-section">
+  <div class="cats-header reveal">
+    <span class="section-label">🌍 Our Purring Network</span>
+    <h2 class="section-title">70+ Cats. 20+ Countries. One World of Calm.</h2>
+    <p>From Tokyo to Dublin, Johannesburg to Madrid — real cats, real homes, real warmth.</p>
+    <a href="https://paniaguai.github.io/pawz/" target="_blank" class="btn btn-primary" style="margin-top:1.5rem;display:inline-block">😸 Meet the Cats</a>
+  </div>
+
+  <div class="countries-grid reveal">
+    <div class="country-pill highlight">🇪🇸 Spain</div>
+    <div class="country-pill highlight">🇵🇭 Philippines</div>
+    <div class="country-pill">🇺🇸 United States</div>
+    <div class="country-pill">🇩🇪 Germany</div>
+    <div class="country-pill">🇬🇧 United Kingdom</div>
+    <div class="country-pill highlight">🇮🇩 Indonesia</div>
+    <div class="country-pill">🇵🇹 Portugal</div>
+    <div class="country-pill">🇨🇦 Canada</div>
+    <div class="country-pill">🇯🇵 Japan</div>
+    <div class="country-pill">🇰🇷 South Korea</div>
+    <div class="country-pill">🇸🇬 Singapore</div>
+    <div class="country-pill">🇳🇱 Netherlands</div>
+    <div class="country-pill">🇨🇭 Switzerland</div>
+    <div class="country-pill highlight">🇬🇷 Greece</div>
+    <div class="country-pill">🇮🇹 Italy</div>
+    <div class="country-pill">🇮🇪 Ireland</div>
+    <div class="country-pill">🇵🇱 Poland</div>
+    <div class="country-pill">🇿🇦 South Africa</div>
+    <div class="country-pill">🇸🇻 El Salvador</div>
+    <div class="country-pill">🇨🇷 Costa Rica</div>
+    <div class="country-pill">🇨🇾 Cyprus</div>
+    <div class="country-pill highlight">🇱🇹 Lithuania</div>
+    <div class="country-pill">🇦🇿 Azerbaijan</div>
+  </div>
+
+  <div class="cat-emoji-wall reveal">
+    <span style="--d:2.5s;--delay:0.0s">😸</span>
+    <span style="--d:3.0s;--delay:0.2s">🐱</span>
+    <span style="--d:2.7s;--delay:0.4s">😻</span>
+    <span style="--d:3.3s;--delay:0.1s">🐈</span>
+    <span style="--d:2.9s;--delay:0.6s">😺</span>
+    <span style="--d:3.1s;--delay:0.3s">🐾</span>
+    <span style="--d:2.6s;--delay:0.5s">😽</span>
+    <span style="--d:3.4s;--delay:0.7s">🙀</span>
+    <span style="--d:2.8s;--delay:0.2s">😸</span>
+    <span style="--d:3.0s;--delay:0.9s">🐈‍⬛</span>
+    <span style="--d:2.5s;--delay:0.4s">😻</span>
+    <span style="--d:3.2s;--delay:0.1s">🐱</span>
+  </div>
+</section>
+
+<!-- VIBES / TESTIMONIALS -->
+<section class="vibe-section">
+  <div class="vibe-inner">
+    <div class="vibe-header reveal">
+      <span class="section-label">💬 Real Reactions</span>
+      <h2 class="section-title">What People Say After Meeting Their Cat</h2>
+      <p>No marketing speak. Just what happens when humans meet cats on Zoom.</p>
+    </div>
+
+    <div class="vibes-grid">
+      <div class="vibe-card reveal" style="transition-delay:0.1s">
+        <div class="vibe-top">
+          <div class="vibe-avatar">😊</div>
+          <div>
+            <div class="vibe-name">Sarah M.</div>
+            <div class="vibe-loc">🇬🇧 London</div>
+            <div class="vibe-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="vibe-text">"I had back-to-back meetings all week. Booked a session on a whim. Ten minutes with Jeeves and I felt like an actual human again. I cried a little, honestly."</p>
+      </div>
+      <div class="vibe-card reveal" style="transition-delay:0.2s">
+        <div class="vibe-top">
+          <div class="vibe-avatar">🧑‍💼</div>
+          <div>
+            <div class="vibe-name">Rodrigo A.</div>
+            <div class="vibe-loc">🇪🇸 Barcelona</div>
+            <div class="vibe-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="vibe-text">"I'm a remote worker, no pets allowed in my flat. This fills something I didn't even know was empty. Cheto knocked over a water glass and it was the highlight of my week."</p>
+      </div>
+      <div class="vibe-card reveal" style="transition-delay:0.3s">
+        <div class="vibe-top">
+          <div class="vibe-avatar">👩‍🔬</div>
+          <div>
+            <div class="vibe-name">Mia T.</div>
+            <div class="vibe-loc">🇺🇸 New York</div>
+            <div class="vibe-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="vibe-text">"I use this before big presentations. There's something about the cat just being utterly unbothered that recalibrates my entire nervous system. Pure medicine."</p>
+      </div>
+      <div class="vibe-card reveal" style="transition-delay:0.4s">
+        <div class="vibe-top">
+          <div class="vibe-avatar">🧓</div>
+          <div>
+            <div class="vibe-name">Hiroshi K.</div>
+            <div class="vibe-loc">🇯🇵 Tokyo</div>
+            <div class="vibe-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="vibe-text">"My therapist charges €150/hour. PawVibesZ charges €8. Both helpful. The cat doesn't judge me when I show up in pajamas."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section">
+  <div class="pricing-inner">
+    <span class="section-label">💰 Simple Pricing</span>
+    <h2 class="section-title">Calm. Simple. Affordable.</h2>
+    <p class="section-desc" style="color:rgba(255,255,255,0.6);max-width:500px;margin:0 auto 3rem">No subscription traps. No hidden fees. Just pay for the purring you want.</p>
+
+    <div class="pricing-cards">
+      <div class="price-card featured">
+        <span class="price-badge">⭐ Most Popular</span>
+        <span class="price-emoji">😸</span>
+        <span class="price-num">€8</span>
+        <div class="price-per">per solo session</div>
+        <p class="price-desc">One-on-one with a real cat and their host. Private, personal, purring. Pay via Stripe.</p>
+        <a href="https://buy.stripe.com/cNi6oGfqL4SHdrg7w40Jq04" class="price-btn">Book Solo →</a>
+      </div>
+      <div class="price-card group-card">
+        <span class="price-badge">👥 For Teams</span>
+        <span class="price-emoji">🐾</span>
+        <span class="price-num">€80</span>
+        <div class="price-per">per group session</div>
+        <p class="price-desc">Bring your team, your friends, your book club. Cats cure Zoom fatigue better than any ice-breaker.</p>
+        <a href="https://buy.stripe.com/aFadR892nad186W7w40Jq05" class="price-btn">Book Group →</a>
+      </div>
+      <div class="price-card paypal-card">
+        <span class="price-badge">💜 PayPal</span>
+        <span class="price-emoji">💙</span>
+        <span class="price-num">Pay</span>
+        <div class="price-per">with PayPal</div>
+        <p class="price-desc">Prefer PayPal? Totally valid. Send securely and get your cat session just the same.</p>
+        <a href="https://www.paypal.com/paypalme/okgomeet" class="price-btn">Pay via PayPal →</a>
+      </div>
+    </div>
+
+    <a href="https://forms.gle/bnT7VsrdPXLXrz3G9" class="btn btn-secondary" style="font-size:1rem;padding:14px 36px">📅 Schedule Your Session →</a>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-section">
+  <div class="final-inner reveal">
+    <span class="final-emoji">😻</span>
+    <h2>Your Cat is Waiting</h2>
+    <p>In a world that never stops buzzing, PawVibesZ gives you something rare: a few minutes of genuinely alive, warm, unscripted presence. It costs €8 and it might be the best thing you do for yourself today.</p>
+    <div class="cta-group" style="justify-content:center">
+      <a href="https://buy.stripe.com/cNi6oGfqL4SHdrg7w40Jq04" class="btn btn-primary" style="font-size:1.2rem;padding:16px 40px">🐾 Book Now — €8</a>
+      <a href="https://paniaguai.github.io/pawz/" target="_blank" class="btn btn-secondary" style="font-size:1.2rem;padding:16px 40px">😸 Official Website</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">🐾 PawVibesZ</span>
+  The World's First Cats on Zoom Platform &nbsp;·&nbsp;
+  <a href="https://www.instagram.com/pawvibesz/" target="_blank">@pawvibesz on Instagram</a> &nbsp;·&nbsp;
+  <a href="https://paniaguai.github.io/pawz/" target="_blank">paniaguai.github.io/pawz</a>
+  <br><br>
+  Made with 😻 for a less noisy, more connected, deeply purring world.
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Animate stat numbers
+  function animateNum(el, target, prefix='', suffix='') {
+    const duration = 1500;
+    const start = performance.now();
+    const isNum = !isNaN(parseInt(target));
+    const end = parseInt(target) || 0;
+    const step = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = prefix + Math.round(eased * end) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const nums = e.target.querySelectorAll('.stat-num');
+        nums.forEach(n => {
+          const text = n.textContent.trim();
+          if (text === '€8') animateNum(n, 8, '€');
+          else if (text.includes('+')) animateNum(n, parseInt(text), '', '+');
+        });
+        statObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  statObs.observe(document.querySelector('.stats-strip'));
+</script>
+</body>
+</html>
